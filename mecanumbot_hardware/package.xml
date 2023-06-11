@@ -5,16 +5,23 @@
   <version>1.0.0</version>
   <description>Mecanum robot hardware interface</description>
   <license>Apache 2.0</license>
-  <author email="randy@deb-ict.com">Randy Deborggraeve</author>
-  <maintainer email="randy@deb-ict.com">Randy Deborggrave</maintainer>
-  <url type="website">https://www.diyrobot.eu/mecanum-bit</url>
-  <url type="repository">https://github.com/DeborggraeveR/ros2-mecanum-bot</url>
-  <url type="bugtracker">https://github.com/DeborggraeveR/ros2-mecanum-bot/issues</url>
+  <author email="karimyasser8@gmail.com">Karim Negm</author>
+  <maintainer email= "karimyasser8@gmail.com">Karim Negm</maintainer>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   
   <depend>hardware_interface</depend>
   <depend>rclcpp</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>libserial-dev</depend>
+
+  <exec_depend>ros2_controllers_test_nodes</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>ros2controlcli</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+
+  <test_depend>ament_cmake_gtest</test_depend>
 
   <build_depend>pluginlib</build_depend>
 

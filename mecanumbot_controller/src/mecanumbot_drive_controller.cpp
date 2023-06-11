@@ -2,7 +2,7 @@
 #include <hardware_interface/types/hardware_interface_type_values.hpp>
 #include <pluginlib/class_list_macros.hpp>
 #include <rclcpp/rclcpp.hpp>
-
+#include <string>
 #include "mecanumbot_controller/mecanumbot_drive_controller.hpp"
 
 PLUGINLIB_EXPORT_CLASS(
@@ -67,16 +67,20 @@ controller_interface::return_type MecanumbotDriveController::update(const rclcpp
 
     // Calculate the wheel velocity
     // See: http://robotsforroboticists.com/drive-kinematics/
-    const auto twist = (*velocity_command)->twist;
+    const auto twist = *(velocity_command->get());
     double fl_wheel_velocity = (1 / wheel_radius_) * (twist.linear.x - twist.linear.y - (wheel_separation_width_ + wheel_separation_length_) * twist.angular.z);
     double fr_wheel_velocity = (1 / wheel_radius_) * (twist.linear.x + twist.linear.y + (wheel_separation_width_ + wheel_separation_length_) * twist.angular.z);
     double rl_wheel_velocity = (1 / wheel_radius_) * (twist.linear.x + twist.linear.y - (wheel_separation_width_ + wheel_separation_length_) * twist.angular.z);
     double rr_wheel_velocity = (1 / wheel_radius_) * (twist.linear.x - twist.linear.y + (wheel_separation_width_ + wheel_separation_length_) * twist.angular.z);
 
+    RCLCPP_INFO(get_node()->get_logger(),"FL: %f FR: %f RL: %f RR: %f", fl_wheel_velocity, fr_wheel_velocity, rl_wheel_velocity, rr_wheel_velocity);
+
     fl_wheel_->set_velocity(fl_wheel_velocity);
     fr_wheel_->set_velocity(fr_wheel_velocity);
     rl_wheel_->set_velocity(rl_wheel_velocity);
     rr_wheel_->set_velocity(rr_wheel_velocity);
+
+
 
     return controller_interface::return_type::OK;
 }
@@ -180,9 +184,9 @@ controller_interface::CallbackReturn MecanumbotDriveController::on_shutdown(cons
 std::shared_ptr<MecanumbotWheel> MecanumbotDriveController::get_wheel(const std::string & wheel_joint_name)
 {
     // Lookup the position state interface
-    const auto position_state = std::find_if(state_interfaces_.cbegin(), state_interfaces_.cend(), [&wheel_joint_name](const hardware_interface::LoanedStateInterface & interface)
+    const auto position_state = std::find_if(state_interfaces_.cbegin(), state_interfaces_.cend(), [&](const hardware_interface::LoanedStateInterface & interface)
     {
-        return interface.get_name() == wheel_joint_name && interface.get_interface_name() == hardware_interface::HW_IF_POSITION;
+        return interface.get_name() == wheel_joint_name + "/" + hardware_interface::HW_IF_POSITION;
     });
     if (position_state == state_interfaces_.cend()) {
         RCLCPP_ERROR(get_node()->get_logger(), "%s position state interface not found", wheel_joint_name.c_str());
@@ -192,7 +196,7 @@ std::shared_ptr<MecanumbotWheel> MecanumbotDriveController::get_wheel(const std:
     // Lookup the velocity state interface
     const auto velocity_state = std::find_if(state_interfaces_.cbegin(), state_interfaces_.cend(), [&wheel_joint_name](const hardware_interface::LoanedStateInterface & interface)
     {
-        return interface.get_name() == wheel_joint_name && interface.get_interface_name() == hardware_interface::HW_IF_VELOCITY;
+        return interface.get_name() == wheel_joint_name + "/" + hardware_interface::HW_IF_VELOCITY;
     });
     if (velocity_state == state_interfaces_.cend()) {
         RCLCPP_ERROR(get_node()->get_logger(), "%s velocity state interface not found", wheel_joint_name.c_str());
@@ -202,7 +206,7 @@ std::shared_ptr<MecanumbotWheel> MecanumbotDriveController::get_wheel(const std:
     // Lookup the velocity command interface
     const auto velocity_command = std::find_if(command_interfaces_.begin(), command_interfaces_.end(), [&wheel_joint_name](const hardware_interface::LoanedCommandInterface & interface)
     {
-        return interface.get_name() == wheel_joint_name && interface.get_interface_name() == hardware_interface::HW_IF_VELOCITY;
+        return interface.get_name() == wheel_joint_name + "/" + hardware_interface::HW_IF_VELOCITY;
     });
     if (velocity_command == command_interfaces_.end()) {
         RCLCPP_ERROR(get_node()->get_logger(), "%s velocity command interface not found", wheel_joint_name.c_str());
