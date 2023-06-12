@@ -1,4 +1,8 @@
 #include "mecanumbot_hardware/mecanumbot_odometry.hpp"
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/convert.h>
+#include "nav_msgs/msg/odometry.hpp"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
 
 
 using namespace debict::mecanumbot::hardware;
@@ -22,14 +26,39 @@ Odometry::Odometry(size_t velocity_rolling_window_size)
   linear_x_accumulator_(velocity_rolling_window_size),
   linear_y_accumulator_(velocity_rolling_window_size),
   angular_accumulator_(velocity_rolling_window_size),
-  encoder_ticks_per_revolution_(26)
-{
-}
+  encoder_ticks_per_revolution_(26),
+  
+  {
+    odom_publisher_ =  this->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
+  }
 
 void Odometry::init(const rclcpp::Time & time)
 {
   timestamp_ = time;
   resetAccumulators();
+}
+
+void Odometry::publishOdometry()
+{
+  nav_msgs::msg::Odometry odom;
+  odom.header.stamp = timestamp_;
+  odom.header.frame_id = "odom";
+  odom.child_frame_id = "base_link";
+
+  // Set the odometry pose
+  odom.pose.pose.position.x = x_;
+  odom.pose.pose.position.y = y_;
+  odom.pose.pose.position.z = 0.0;
+  odom.pose.pose.orientation = tf2::toMsg(tf2::Quaternion(0.0, 0.0, 0.0, heading_));
+
+  // Set the odometry twist
+  odom.twist.twist.linear.x = linear_x_;
+  odom.twist.twist.linear.y = linear_y_;
+  odom.twist.twist.angular.z = angular_;
+
+
+  // Publish the odometry message
+  odom_publisher_->publish(odom);
 }
 
 bool Odometry::update(double front_left_pos, double front_right_pos, double rear_left_pos, double rear_right_pos, const rclcpp::Time & time)
