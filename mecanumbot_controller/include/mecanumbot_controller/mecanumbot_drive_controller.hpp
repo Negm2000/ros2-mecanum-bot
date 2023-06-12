@@ -7,6 +7,7 @@
 #include <rclcpp_lifecycle/state.hpp>
 #include <realtime_tools/realtime_buffer.h>
 #include <geometry_msgs/msg/twist_stamped.hpp>
+#include <std_msgs/msg/string.hpp>
 #include <string>
 
 #include "mecanumbot_controller/mecanumbot_wheel.hpp"
@@ -19,6 +20,7 @@ namespace debict
         namespace controller
         {
             using Twist = geometry_msgs::msg::Twist;
+            using GUI = std_msgs::msg::String;
 
             class MecanumbotDriveController
                 : public controller_interface::ControllerInterface
@@ -64,7 +66,9 @@ namespace debict
 
             protected:
                 rclcpp::Subscription<Twist>::SharedPtr velocity_command_subsciption_;
+                rclcpp::Subscription<std_msgs::msg::String>::SharedPtr GUI_command_subsciption_;
                 realtime_tools::RealtimeBuffer<std::shared_ptr<Twist>> velocity_command_ptr_;
+                realtime_tools::RealtimeBuffer<std::shared_ptr<GUI>> GUI_command_ptr_;
                 std::shared_ptr<MecanumbotWheel> fl_wheel_;
                 std::shared_ptr<MecanumbotWheel> fr_wheel_;
                 std::shared_ptr<MecanumbotWheel> rl_wheel_;

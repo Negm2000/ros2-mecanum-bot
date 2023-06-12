@@ -58,16 +58,48 @@ controller_interface::CallbackReturn MecanumbotDriveController::on_init()
 }
 
 controller_interface::return_type MecanumbotDriveController::update(const rclcpp::Time & time, const rclcpp::Duration & period)
-{
+{   
+    static bool running = false;
     // Get the last velocity command
     auto velocity_command = velocity_command_ptr_.readFromRT();
-    if (!velocity_command || !(*velocity_command)) {
+    auto GUI_command = GUI_command_ptr_.readFromRT();
+    
+    if ((!velocity_command || !(*velocity_command)) && (!GUI_command || !(*GUI_command))) {
         return controller_interface::return_type::OK;
     }
 
     // Calculate the wheel velocity
     // See: http://robotsforroboticists.com/drive-kinematics/
     const auto twist = *(velocity_command->get());
+    static auto begin = std::chrono::high_resolution_clock::now();
+    if ((GUI_command->get())->data + '\0' == "Tutankhamun" || running){
+        RCLCPP_INFO(get_node()->get_logger(),"Tutankhamun");
+        running = true;
+        // Forward 2 seconds, strafe right 2 seconds, then return control
+        auto end = std::chrono::high_resolution_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(end - begin);
+        if (elapsed.count() < 2){
+            RCLCPP_INFO(get_node()->get_logger(),"Forward");
+            fl_wheel_->set_velocity(15);
+            fr_wheel_->set_velocity(15);
+            rl_wheel_->set_velocity(15);
+            rr_wheel_->set_velocity(15);
+        }
+        else if (elapsed.count() < 4){
+            RCLCPP_INFO(get_node()->get_logger(),"Strafe Right");
+            fl_wheel_->set_velocity(15);
+            fr_wheel_->set_velocity(-15);
+            rl_wheel_->set_velocity(-15);
+            rr_wheel_->set_velocity(15);
+        }
+        else{
+            RCLCPP_INFO(get_node()->get_logger(),"Return Control");
+            begin = std::chrono::high_resolution_clock::now();
+            GUI_command = nullptr;
+            running = false;
+        }
+
+    }
     double fl_wheel_velocity = (1 / wheel_radius_) * (twist.linear.x - twist.linear.y - (wheel_separation_width_ + wheel_separation_length_) * twist.angular.z);
     double fr_wheel_velocity = (1 / wheel_radius_) * (twist.linear.x + twist.linear.y + (wheel_separation_width_ + wheel_separation_length_) * twist.angular.z);
     double rl_wheel_velocity = (1 / wheel_radius_) * (twist.linear.x + twist.linear.y - (wheel_separation_width_ + wheel_separation_length_) * twist.angular.z);
@@ -132,10 +164,20 @@ controller_interface::CallbackReturn MecanumbotDriveController::on_configure(con
         return controller_interface::CallbackReturn::ERROR;
     }
 
+          GUI_command_subsciption_ = get_node()->create_subscription<GUI>("/GUI_Command", rclcpp::SystemDefaultsQoS(), [this](const GUI::SharedPtr GUI_command)
+    {
+    
+        RCLCPP_ERROR(get_node()->get_logger(), "Received GUI command, %s", GUI_command->data.c_str());
+
+    });
+
+
     velocity_command_subsciption_ = get_node()->create_subscription<Twist>("/cmd_vel", rclcpp::SystemDefaultsQoS(), [this](const Twist::SharedPtr twist)
     {
         velocity_command_ptr_.writeFromNonRT(twist);
     });
+
+
 
     return controller_interface::CallbackReturn::SUCCESS;
 }
