@@ -26,6 +26,7 @@ add_library(
   ${PROJECT_NAME}
   SHARED
   src/mecanumbot_hardware.cpp
+  # src/mecanumbot_odometry.cpp
 )
 target_include_directories(
   ${PROJECT_NAME}
@@ -37,6 +38,7 @@ ament_target_dependencies(
   hardware_interface
   pluginlib
   rclcpp
+
 )
 
 target_link_libraries(mecanumbot_hardware PUBLIC serial)
@@ -64,9 +66,8 @@ ament_export_dependencies(
   hardware_interface
   pluginlib
   rclcpp
+
 )
-
-
 
 
 ament_package()

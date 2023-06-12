@@ -5,6 +5,7 @@
 #include <cmath>
 #include "rclcpp/time.hpp"
 #include "rcppmath/rolling_mean_accumulator.hpp"
+#include "rclcpp/rclcpp.hpp"
 
 namespace debict
 {
@@ -13,7 +14,7 @@ namespace debict
         namespace hardware
         {
 
-            class Odometry
+            class Odometry: rclcpp::Node
             {
             public:
             explicit Odometry(size_t velocity_rolling_window_size = 10);
@@ -40,7 +41,7 @@ namespace debict
             void integrateRungeKutta2(double linear_x, double linear_y, double angular);
             void integrateExact(double linear_x, double linear_y, double angular);
             void resetAccumulators();
-
+            void Odometry::publishOdometry();
             // Current timestamp:
             rclcpp::Time timestamp_;
 
@@ -67,6 +68,9 @@ namespace debict
             double front_right_wheel_old_pos_;
             double rear_left_wheel_old_pos_;
             double rear_right_wheel_old_pos_;
+
+            // Publisher
+            std::shared_ptr<rclcpp::Publisher<nav_msgs::msg::Odometry>> odom_publisher_ ;
 
             // Rolling mean accumulators for the linear and angular velocities:
             size_t velocity_rolling_window_size_;

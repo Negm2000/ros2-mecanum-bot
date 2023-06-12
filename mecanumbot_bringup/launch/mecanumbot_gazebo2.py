@@ -58,7 +58,7 @@ def generate_launch_description():
     # Launch them all!
     return LaunchDescription([
         rsp,
-        gazebo,
+        # gazebo,
         spawn_entity,
         joint_broad_spawner,
         mec_drive_spawner,
