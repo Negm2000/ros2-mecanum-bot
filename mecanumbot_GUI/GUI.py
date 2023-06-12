@@ -4,6 +4,10 @@ import time
 from ProjectControls import getLocationInfo, LocationsNames, SpeakingThreshold
 from HelperComponents import AnswerQuestion, initSpeech, saySpeech
 from SpeechRecorder import SpeechRecorder
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+from threading import Thread
 
 TEXT_STYLE = """QLabel {
     background: #262626;
@@ -50,9 +54,25 @@ PUSH_BUTTON_STYLE = """QPushButton {
 """
 
 
+class MinimalPublisher(Node):
+
+    def __init__(self, data):
+        super().__init__('GUI')
+        self.publisher_ = self.create_publisher(String, 'GUI_Command', 1)
+        self.i = data
+        self.GUI_callback()
+
+    def GUI_callback(self):
+        msg = String()
+        msg.data = str(self.i)
+        self.publisher_.publish(msg)
+        self.get_logger().info(f'Publishing:{msg.data}')
+
+
 class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
+        rclpy.init()
 
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.setWindowTitle("application main window")
@@ -145,12 +165,19 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             button.deleteLater()
 
     def ComePage(self, location):
+        self.minimal_publisher = MinimalPublisher(location)
         self.removeWhereToGoPage()
         self.HeaderTextbox.setText('Come with me please')
         self.HeaderTextbox.setMaximumHeight(20000)
         self.layout_text.setContentsMargins(30, 30, 30, 30)
         QtWidgets.qApp.processEvents()
-        saySpeech('come please.mp3', False)
+        def threaded_function():
+            rclpy.spin_once(self.minimal_publisher)
+            self.minimal_publisher.destroy_node()
+        thread = Thread(target = threaded_function)
+        thread.start()
+        # thread.join()
+        saySpeech('come please.mp3')
         ####################TODO#########################
         # connect wit ROS by send location to go to and
         # then calling self.SectionInfoPage(location)

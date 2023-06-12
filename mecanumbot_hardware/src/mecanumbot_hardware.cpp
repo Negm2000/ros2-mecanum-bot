@@ -474,7 +474,6 @@ hardware_interface::return_type MecanumbotHardware::write(
       motor_counts_per_loop[i] = wheels_[i].cmd/wheels_[i].rads_per_count / cfg_.loop_rate; 
 
     arduino_comms_.set_motor_values(motor_counts_per_loop);
-    
       
 
   return hardware_interface::return_type::OK;

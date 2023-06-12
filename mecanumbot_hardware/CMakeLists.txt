@@ -17,9 +17,17 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(controller_interface REQUIRED)
+
 find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(realtime_tools REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
+find_package(rcpputils REQUIRED)
+
 
 
 add_library(
@@ -37,6 +45,10 @@ ament_target_dependencies(
   hardware_interface
   pluginlib
   rclcpp
+  realtime_tools
+  rclcpp_lifecycle
+  rcpputils
+
 )
 
 target_link_libraries(mecanumbot_hardware PUBLIC serial)

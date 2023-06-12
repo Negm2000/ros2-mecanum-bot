@@ -103,17 +103,23 @@ namespace debict
                 int i = 0;
                 // Split the response into tokens
                 // Find delimiter and split the string at it, erase the substring+delimite from the response, repeat
+
+              // std::cout<<response <<std::endl;
                 while (pos != std::string::npos && i<3) { 
+                  pos = response.find(delimiter);
                   token_arr[i] = response.substr(0, pos);
                   response.erase(0, pos + delimiter.length());
-                  pos = response.find(delimiter);
                   i++;
+                  
                 }
                 token_arr[3]=response;
 
                 for (int i=0; i<4; i++)
                   wheels[i].enc = std::atoi(token_arr[i].c_str());
-                
+    
+                std::cout << "T0: " << token_arr[0] << " T1: " << token_arr[1] << " T2: " << token_arr[2] << " T3: " << token_arr[3] << std::endl;
+              
+              
               }
 
               void set_motor_values(int* motor_values)
