@@ -33,6 +33,8 @@
 // #include "visibility_control.h"
 #include "mecanumbot_hardware_compiler.h"
 #include "Wheel.hpp"
+#include "../src/GUI_subscriber.hpp"
+
 
 namespace debict
 {
@@ -102,6 +104,7 @@ namespace debict
               ArduinoComms arduino_comms_;
               Config cfg_;
               std::vector<Wheel> wheels_;
+              GUI_Subscriber gui_subscriber_;
               
             };  // class MecbotHardware
 

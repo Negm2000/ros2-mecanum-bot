@@ -93,6 +93,8 @@ namespace debict
                 std::string response = send_msg("\r");
               }
 
+ 
+
               void read_encoder_values(std::vector<Wheel>& wheels)
               {
                 std::string response = send_msg("e\r");
@@ -117,7 +119,7 @@ namespace debict
                 for (int i=0; i<4; i++)
                   wheels[i].enc = std::atoi(token_arr[i].c_str());
     
-                std::cout << "T0: " << token_arr[0] << " T1: " << token_arr[1] << " T2: " << token_arr[2] << " T3: " << token_arr[3] << std::endl;
+                std::cout<< "Encoder Ticks: " << "FL: " << token_arr[0] << " FR: " << token_arr[1] << " RL: " << token_arr[2] << " RR: " << token_arr[3] << std::endl;
               
               
               }
@@ -126,6 +128,13 @@ namespace debict
               {
                 std::stringstream ss;
                 ss << "m " << motor_values[0] << " " << motor_values[1] << " " << motor_values[2] << " " << motor_values[3] << "\r";
+                send_msg(ss.str());
+              }
+
+              void send_gui_command(int command)
+              {
+                std::stringstream ss;
+                ss << "g " << command << "\r";
                 send_msg(ss.str());
               }
 

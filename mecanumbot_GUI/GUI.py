@@ -171,13 +171,13 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.HeaderTextbox.setMaximumHeight(20000)
         self.layout_text.setContentsMargins(30, 30, 30, 30)
         QtWidgets.qApp.processEvents()
+        saySpeech('come.mp3')
         def threaded_function():
             rclpy.spin_once(self.minimal_publisher)
             self.minimal_publisher.destroy_node()
         thread = Thread(target = threaded_function)
         thread.start()
         # thread.join()
-        saySpeech('come please.mp3')
         ####################TODO#########################
         # connect wit ROS by send location to go to and
         # then calling self.SectionInfoPage(location)

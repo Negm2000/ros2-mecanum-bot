@@ -34,6 +34,7 @@ add_library(
   ${PROJECT_NAME}
   SHARED
   src/mecanumbot_hardware.cpp
+  src/GUI_subscriber.hpp
 )
 target_include_directories(
   ${PROJECT_NAME}

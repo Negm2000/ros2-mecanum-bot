@@ -7,17 +7,19 @@ using std::placeholders::_1;
 class GUI_Subscriber : public rclcpp::Node
 {
   public:
+
+  std::string last_message_;
     
-    GUI_Subscriber() : Node("gui_subscriber"),
+    GUI_Subscriber() : Node("gui_subscriber")
     {
       subscription_ = this->create_subscription<std_msgs::msg::String>(
       "GUI_Command", 1, std::bind(&GUI_Subscriber::topic_callback, this, _1));
     }
 
   private:
-    std::string topic_callback(const std_msgs::msg::String::SharedPtr msg) const
+    void topic_callback(const std_msgs::msg::String::SharedPtr msg) 
     {
-    
+        last_message_ = msg->data;
     }   
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
 };

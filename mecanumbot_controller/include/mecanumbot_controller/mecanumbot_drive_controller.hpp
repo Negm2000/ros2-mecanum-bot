@@ -66,9 +66,9 @@ namespace debict
 
             protected:
                 rclcpp::Subscription<Twist>::SharedPtr velocity_command_subsciption_;
-                rclcpp::Subscription<std_msgs::msg::String>::SharedPtr GUI_command_subsciption_;
+                // rclcpp::Subscription<std_msgs::msg::String>::SharedPtr GUI_command_subsciption_;
                 realtime_tools::RealtimeBuffer<std::shared_ptr<Twist>> velocity_command_ptr_;
-                realtime_tools::RealtimeBuffer<std::shared_ptr<GUI>> GUI_command_ptr_;
+                // realtime_tools::RealtimeBuffer<std::shared_ptr<GUI>> GUI_command_ptr_;
                 std::shared_ptr<MecanumbotWheel> fl_wheel_;
                 std::shared_ptr<MecanumbotWheel> fr_wheel_;
                 std::shared_ptr<MecanumbotWheel> rl_wheel_;
