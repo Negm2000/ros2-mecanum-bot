@@ -49,6 +49,11 @@ def generate_launch_description():
         arguments=["joint_state_controller"],
     )
 
+    IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [ThisLaunchFileDir(), '/mecanumbot_teleop2.py']
+        )
+    ),
 
 
     # Launch them all!
