@@ -42,7 +42,7 @@ hardware_interface::CallbackReturn MecanumbotHardware::on_init(
     cfg_.timeout_ms =std::stoi(info_.hardware_parameters["timeout_ms"]);
     RCLCPP_INFO(rclcpp::get_logger("MecanumbotHardware"), "Timeout: %d", cfg_.timeout_ms);
     cfg_.encoder_ticks_per_rev = 26;
-    // gui_subscriber_.last_message_.clear();
+    gui_subscriber_.last_message_.clear();
     if (info_.hardware_parameters.count("pid_p") > 0)
   {
     cfg_.pid_p = std::stoi(info_.hardware_parameters["pid_p"]);

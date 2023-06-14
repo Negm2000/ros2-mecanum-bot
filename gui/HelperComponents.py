@@ -11,7 +11,7 @@ filename = 'sound.wav'
 
 def AnswerQuestion(location, recorder=SpeechRecorder(30, filename)):
     reply = ''
-    openai.api_key = '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'
+    openai.api_key = 'sk-8c11fb5f3b57ee9f0c52bf500aed768e'
     messages = [
         {"role": "system", "content": "You are a intelligent assistant."}]
 
