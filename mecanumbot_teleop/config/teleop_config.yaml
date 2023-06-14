@@ -1,0 +1,69 @@
+# teleop:
+#   ros__parameters:
+#     joy_topic: /joy
+#     twist_topic: /cmd_vel
+#     move:
+#       forward:
+#         axis: 1
+#         scale: 3.5
+#         deadzone: 0.0
+#       reverse:
+#         axis: 1
+#         scale: 3.5
+#         deadzone: 0.0
+#       left:
+#         axis: 0
+#         scale: 3.5
+#         deadzone: 0.0
+#       right:
+#         axis: 0
+#         scale: 3.5
+#         deadzone: 0.0
+#     turn:
+#       left:
+#         axis: 5
+#         scale: 10.0
+#         deadzone: 0.0
+#         offset: 1.0
+#       right:
+#         axis: 4
+#         scale: -10.0
+#         deadzone: 0.0
+#         offset: 1.0
+
+# joystick:
+#   ros__parameters:
+#     joy_topic: /joy
+#     dev: /dev/input/js0
+#     deadzone: 0.2
+
+joy_node:
+  ros__parameters:
+    device_id: 0
+    deadzone: 0.08
+    autorepeat_rate: 20.0
+
+teleop_node:
+  ros__parameters:
+    axis_linear:
+      x: 1
+      y: 0
+    scale_linear:
+      x: 1.0
+      y: 1.0
+    scale_linear_turbo:
+      x: 2.0
+      y: 2.0
+
+    axis_angular:
+      yaw: 3
+    scale_angular:
+      yaw: 1.5
+    scale_angular_turbo:
+      yaw: 3.0
+
+
+    enable_button: 6
+    enable_turbo_button: 7
+
+    require_enable_button: true
