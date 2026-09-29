@@ -1,40 +1,32 @@
-# ros2-mecanum-bot
-ROS2 Mecanum wheel robot
+# Mecanum tour-guide robot (ROS 2)
 
-## Getting started
+Software for a museum tour-guide robot on a four-wheel mecanum base. B.Sc. graduation project at Cairo University (2023, team of 5, graded A+).
 
-#### Prerequisites
-This project is build and tested on Ubuntu 22.04 LTS with ROS 2 Humble LTS.  
-For ROS 2 Foxy on Ubuntu 20.04 LTS see: [Branch: Foxy](https://github.com/deborggraever/ros2-mecanum-bot/tree/foxy)
-* [ROS install instructions](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
-* [Colcon install instructions](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Colcon-Tutorial.html)
+This repository is a fork of [deborggraever/ros2-mecanum-bot](https://github.com/deborggraever/ros2-mecanum-bot). The upstream template provided the package layout and the mecanum drive controller; the changes below are ours.
 
-#### Setup workspace
-```
-mkdir -p ~/workspaces/ros2-mecanum-bot/src
-cd ~/workspaces/ros2-mecanum-bot/src
-git clone git clone git@github.com:Negm2000/ros2-mecanum-bot.git 
-```
+## What this fork adds
 
-#### Install dependencies
-```
-cd ~/workspaces/ros2-mecanum-bot
-rosdep update
-rosdep install --from-paths src --ignore-src --rosdistro humble -r -y
-```
+- **Hardware interface.** `mecanumbot_hardware` rewritten as a `ros2_control` `SystemInterface` that talks to an Arduino Mega over serial (LibSerial): wheel velocity commands go out, encoder counts come back, and the wheel PID gains are set from the URDF.
+- **Odometry.** `mecanumbot_odometry` integrates the four wheel encoders with mecanum kinematics and publishes `nav_msgs/Odometry`.
+- **Robot description and simulation.** URDF updated for our chassis, plus Gazebo launch files and an obstacle world for testing without hardware.
+- **Teleop and bring-up.** Teleop configuration and launch files for hardware tests.
+- **Visitor GUI.** A PyQt5 touchscreen app (`mecanumbot_GUI`) with voice prompts and speech input.
 
-#### Build and run
-```
-cd ~/workspaces/ros2-mecanum-bot
+## Status
+
+Drive, odometry and teleop ran on the real robot (Raspberry Pi 4, Arduino Mega, wheel encoders). SLAM and Nav2 with a Kinect were planned but not finished before the project deadline.
+
+## Build and run
+
+Tested on Ubuntu 22.04 with ROS 2 Humble.
+
+```bash
+mkdir -p ~/ws/src && cd ~/ws/src
+git clone https://github.com/Negm2000/ros2-mecanum-bot.git
+cd ~/ws
+rosdep install --from-paths src --ignore-src -r -y
 colcon build
 source install/setup.bash
-ros2 launch mecanumbot_bringup mecanumbot_hardware.py
-```
-
-#### Visualize the robot
-
-```
-cd ~/workspaces/ros2-mecanum-bot
-source install/setup.bash
-ros2 launch mecanumbot_bringup rviz2.py
+ros2 launch mecanumbot_bringup mecanumbot_hardware.py   # real robot
+ros2 launch mecanumbot_bringup mecanumbot_gazebo.py     # simulation
 ```
