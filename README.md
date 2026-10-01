@@ -2,6 +2,10 @@
 
 Software for a museum tour-guide robot on a four-wheel mecanum base. B.Sc. graduation project at Cairo University (2023, team of 5, graded A+).
 
+![Robot design, mecanum drive base and visitor GUI](docs/robot_overview.png)
+
+Left to right: the robot's body (team CAD), the mecanum drive base with its electronics (CAD), and the visitor touchscreen app from `mecanumbot_GUI`.
+
 This repository is a fork of [deborggraever/ros2-mecanum-bot](https://github.com/deborggraever/ros2-mecanum-bot). The upstream template provided the package layout and the mecanum drive controller; the changes below are ours.
 
 ## What this fork adds
